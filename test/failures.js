@@ -2,6 +2,7 @@
 
 const expect = require('chai').expect;
 const javaDeserialization = require('../');
+const Parser = require("../src/parser.js");
 
 const STREAM_MAGIC = "aced";
 const STREAM_VERSION = "0005";
@@ -62,6 +63,12 @@ function parsing(hex) {
     const buf = Buffer.from(hex, "hex");
     return function() {
         return javaDeserialization.parse(buf);
+    };
+}
+
+function regestering(str) {
+    return function() {
+        Parser.register("java.util.FailedTest", str, function(){});
     };
 }
 
@@ -174,6 +181,12 @@ describe("Failure scenarios", function() {
         const good = parsing(hex.replace("?", "1"));
         expect(parsing(hex.replace("?", "3")))
             .to.throw("Expected 3 elements but parsed 1");
+    });
+
+    it("bad serialVersionUID", function() {
+        const serialVersionUID = "1234567890";
+        expect(regestering(serialVersionUID))
+            .to.throw("serialVersionUID must be 16 hex digits, found " + serialVersionUID.length);
     });
 
 });

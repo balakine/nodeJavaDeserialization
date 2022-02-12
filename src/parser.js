@@ -24,7 +24,6 @@
 
 "use strict";
 
-var assert = require("assert");
 var Long = require("long");
 
 var names = [
@@ -365,8 +364,8 @@ Parser.prototype["prim["] = function() {
 }
 
 Parser.register = function(className, serialVersionUID, parser) {
-    assert.strictEqual(serialVersionUID.length, 16,
-                       "serialVersionUID must be 16 hex digits");
+    if (serialVersionUID.length !== 16)
+        throw Error("serialVersionUID must be 16 hex digits, found " + serialVersionUID.length);
     Parser.prototype[className + "@" + serialVersionUID] = parser;
 }
 
